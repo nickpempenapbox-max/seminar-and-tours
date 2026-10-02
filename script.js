@@ -40,34 +40,48 @@ function changeBadgeSlide(direction) {
   }
 }
 
-// Lightbox Proof Modal Functionality
-function openProofModal(imageArray) {
-  const modal = document.getElementById('proofModal');
-  const gallery = document.getElementById('proofGallery');
-  
-  if (!modal || !gallery) return;
 
+ 
+function openProofModal(images) {
+  const gallery = document.getElementById('proofGallery');
+  const modal = document.getElementById('proofModal');
+  
+  if (!gallery || !modal) return;
+  
+  // Clear previous content
   gallery.innerHTML = '';
   
-  imageArray.forEach(imgSrc => {
+  // Convert to array if passed as a string or array
+  let imageList = Array.isArray(images) ? images : [images];
+
+  imageList.forEach(src => {
+    // Clean up quotes or brackets if passed awkwardly
+    let cleanSrc = src.replace(/[\[\]']/g, '').trim();
+    
     const img = document.createElement('img');
-    img.src = imgSrc;
-    img.alt = 'Proof Image';
+    img.src = cleanSrc;
+    img.alt = "Proof Image";
+    img.className = "proof-image";
+    
+    // Fallback error check
+    img.onerror = function() {
+      console.error("Failed to load image at:", cleanSrc);
+    };
+
     gallery.appendChild(img);
   });
-  
-  modal.classList.add('open');
+
   modal.setAttribute('aria-hidden', 'false');
+  modal.style.display = 'flex';
 }
 
 function closeProofModal() {
   const modal = document.getElementById('proofModal');
-  if (!modal) return;
-  
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
+  if (modal) {
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
+  }
 }
-
 // Close Modal on Escape Key
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
